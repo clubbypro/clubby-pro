@@ -12,10 +12,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
-  if (!isValidSessionToken(token)) {
-    return NextResponse.json({ authenticated: false }, { status: 401 });
-  }
-  return NextResponse.json({ authenticated: true });
+  return NextResponse.json({ authenticated: isValidSessionToken(token) });
 }
 
 export async function POST(request: NextRequest) {

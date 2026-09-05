@@ -17,13 +17,19 @@ export default function Navbar() {
   const isHome = pathname === "/";
 
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("clubby_admin"));
-
     let cancelled = false;
+
+    queueMicrotask(() => {
+      if (!cancelled && localStorage.getItem("clubby_admin")) {
+        setIsLoggedIn(true);
+      }
+    });
+
     fetch("/api/admin/session")
-      .then((res) => {
+      .then((res) => (res.ok ? res.json() : { authenticated: false }))
+      .then((data) => {
         if (cancelled) return;
-        if (res.ok) {
+        if (data?.authenticated) {
           localStorage.setItem("clubby_admin", "true");
           setIsLoggedIn(true);
         } else {

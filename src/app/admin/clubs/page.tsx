@@ -138,7 +138,7 @@ export default function AdminClubsPage() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    setClubs(getClubs());
+    queueMicrotask(() => setClubs(getClubs()));
   }, []);
 
   const filtered = clubs.filter(
