@@ -1,21 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
-  const router = useRouter();
-  const [authed, setAuthed] = useState(false);
-
-  useEffect(() => {
-    if (!localStorage.getItem("clubby_admin")) {
-      router.push("/");
-    } else {
-      setAuthed(true);
-    }
-  }, [router]);
-
-  if (!authed) return null;
-
   return (
     <main className="min-h-screen bg-cream pt-24 px-4">
       <div className="max-w-5xl mx-auto">

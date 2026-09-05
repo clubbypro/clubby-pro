@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Club } from "@/lib/recommend";
 import { getClubs, saveClubs, deleteClub, resetClubs, generateId } from "@/lib/clubStore";
@@ -133,23 +132,14 @@ function ClubForm({ club, onSave, onCancel }: { club: Club; onSave: (c: Club) =>
 }
 
 export default function AdminClubsPage() {
-  const router = useRouter();
-  const [authed, setAuthed] = useState(false);
   const [clubs, setClubs] = useState<Club[]>([]);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Club | null>(null);
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem("clubby_admin")) {
-      router.push("/");
-    } else {
-      setAuthed(true);
-      setClubs(getClubs());
-    }
-  }, [router]);
-
-  if (!authed) return null;
+    queueMicrotask(() => setClubs(getClubs()));
+  }, []);
 
   const filtered = clubs.filter(
     (c) =>

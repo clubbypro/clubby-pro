@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getSummary, clearEvents, AnalyticsSummary, AnalyticsEvent } from "@/lib/analytics";
 
 function StatCard({ label, value, sub, icon }: { label: string; value: string | number; sub?: string; icon: string }) {
@@ -86,18 +85,11 @@ function EventTypeBadge({ type }: { type: AnalyticsEvent["type"] }) {
 }
 
 export default function AnalyticsPage() {
-  const router = useRouter();
-  const [authed, setAuthed] = useState(false);
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
 
   useEffect(() => {
-    if (!localStorage.getItem("clubby_admin")) {
-      router.push("/");
-      return;
-    }
-    setAuthed(true);
     getSummary().then(setSummary);
-  }, [router]);
+  }, []);
 
   const handleClear = async () => {
     if (confirm("Clear all analytics data? This cannot be undone.")) {
@@ -107,7 +99,7 @@ export default function AnalyticsPage() {
     }
   };
 
-  if (!authed || !summary) return null;
+  if (!summary) return null;
 
   return (
     <main className="min-h-screen bg-cream pt-24 pb-16 px-4">
