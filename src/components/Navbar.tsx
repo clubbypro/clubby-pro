@@ -18,24 +18,61 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("clubby_admin"));
+
+    let cancelled = false;
+    fetch("/api/admin/session")
+      .then((res) => {
+        if (cancelled) return;
+        if (res.ok) {
+          localStorage.setItem("clubby_admin", "true");
+          setIsLoggedIn(true);
+        } else {
+          localStorage.removeItem("clubby_admin");
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          localStorage.removeItem("clubby_admin");
+          setIsLoggedIn(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
-    if (email === "henry@aspenpartnergroup.com" && password === "Highlands4118!") {
+    try {
+      const res = await fetch("/api/admin/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (!res.ok) {
+        setLoginError("Invalid credentials");
+        return;
+      }
       localStorage.setItem("clubby_admin", "true");
       setIsLoggedIn(true);
       setShowLogin(false);
       setEmail("");
       setPassword("");
       router.push("/admin");
-    } else {
+    } catch {
       setLoginError("Invalid credentials");
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/session", { method: "DELETE" });
+    } catch {
+      // Cookie clear is best-effort; always drop the UI flag.
+    }
     localStorage.removeItem("clubby_admin");
     setIsLoggedIn(false);
     if (pathname.startsWith("/admin")) router.push("/");
