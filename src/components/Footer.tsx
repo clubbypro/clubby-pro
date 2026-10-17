@@ -15,7 +15,7 @@ export default function Footer() {
             </p>
           </div>
           <div>
-            <h4 className="font-semibold mb-3 text-gold">Product</h4>
+            <h2 className="font-semibold mb-3 text-gold">Product</h2>
             <ul className="space-y-2 text-sm text-gray-400">
               <li><Link href="/fit" className="hover:text-white transition">Get Fitted</Link></li>
               <li><Link href="/ball-tracer" className="hover:text-white transition">Ball Tracer</Link></li>
@@ -23,14 +23,15 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-3 text-gold">Learn</h4>
+            <h2 className="font-semibold mb-3 text-gold">Learn</h2>
             <ul className="space-y-2 text-sm text-gray-400">
               <li><Link href="/learn" className="hover:text-white transition">Blog</Link></li>
               <li><Link href="/about" className="hover:text-white transition">About Us</Link></li>
+              <li><Link href="/accessibility" className="hover:text-white transition">Accessibility</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-3 text-gold">Connect</h4>
+            <h2 className="font-semibold mb-3 text-gold">Connect</h2>
             <div className="flex gap-4 text-gray-400">
               <a href="#" aria-label="Instagram" className="hover:text-white transition text-xl">📷</a>
               <a href="#" aria-label="Twitter" className="hover:text-white transition text-xl">🐦</a>
@@ -38,7 +39,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-10 pt-6 border-t border-gray-700 text-center text-sm text-gray-500">
+        <div className="mt-10 pt-6 border-t border-gray-700 text-center text-sm text-gray-300">
           © {new Date().getFullYear()} Clubby. All rights reserved.
         </div>
       </div>

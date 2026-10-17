@@ -755,13 +755,21 @@ export default function BallTracerPage() {
               Record or upload a golf shot, add a pro-style glowing ball flight tracer, replay the shot, and download a shareable video.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="px-6 py-3 rounded-full bg-gold text-charcoal font-bold hover:bg-soft-gold transition"
+              <label
+                htmlFor="ball-tracer-video-upload"
+                className="px-6 py-3 rounded-full bg-gold text-charcoal font-bold hover:bg-soft-gold transition cursor-pointer focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-white"
               >
                 Upload Video
-              </button>
+                <input
+                  ref={fileInputRef}
+                  id="ball-tracer-video-upload"
+                  type="file"
+                  accept="video/*"
+                  onChange={handleUpload}
+                  className="sr-only"
+                  aria-label="Upload swing video"
+                />
+              </label>
               <button
                 type="button"
                 onClick={startCamera}
@@ -769,7 +777,6 @@ export default function BallTracerPage() {
               >
                 Open Camera + Mark Ball
               </button>
-              <input ref={fileInputRef} type="file" accept="video/*" onChange={handleUpload} className="hidden" />
             </div>
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-gray-300">
               <div className="rounded-2xl bg-white/5 border border-white/10 p-4"><span className="text-gold font-bold">1.</span> Upload a video, or open the camera and tap the ball before recording.</div>

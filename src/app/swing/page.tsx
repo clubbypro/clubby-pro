@@ -200,7 +200,7 @@ export default function SwingAnalyzerPage() {
   return (
     <div className="min-h-screen bg-charcoal">
       {/* Header */}
-      <nav className="border-b border-gray-800 bg-charcoal/80 backdrop-blur-xl sticky top-0 z-50">
+      <nav className="border-b border-gray-800 bg-charcoal sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-1.5">
             <img src="/images/clubby-bear.png" alt="" className="h-10" />
@@ -214,31 +214,44 @@ export default function SwingAnalyzerPage() {
       </nav>
 
       <main className="max-w-6xl mx-auto px-4 py-10">
-        {/* Hero */}
-        {!analysis && (
-          <div className="text-center mb-10">
-            <h1 className="font-[var(--font-heading)] text-4xl md:text-5xl font-bold text-white mb-3">
-              AI Swing <span className="text-gold">Analyzer</span>
-            </h1>
+        <div className={analysis ? "sr-only" : "text-center mb-10"}>
+          <h1 className="font-[var(--font-heading)] text-4xl md:text-5xl font-bold text-white mb-3">
+            AI Swing <span className="text-gold">Analyzer</span>
+          </h1>
+          {!analysis && (
             <p className="text-gray-400 text-lg max-w-xl mx-auto">
               Upload a video of your swing. Our AI analyzes your mechanics, draws reference lines, and gives you a score with personalized tips.
             </p>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Upload Area */}
         {!analysis && !analyzing && (
           <div
-            onClick={() => fileRef.current?.click()}
+            onClick={(event) => {
+              if ((event.target as HTMLElement).closest("label")) return;
+              fileRef.current?.click();
+            }}
             className="max-w-lg mx-auto border-2 border-dashed border-gray-700 rounded-2xl p-16 text-center cursor-pointer hover:border-gold/50 transition-all group"
           >
-            <input ref={fileRef} type="file" accept="video/*" onChange={handleUpload} className="hidden" />
             <div className="text-6xl mb-4 group-hover:scale-110 transition-transform">🎥</div>
             <p className="text-white font-semibold text-lg">Upload Your Swing Video</p>
             <p className="text-gray-500 text-sm mt-2">MP4, MOV, or WebM • Max 100MB • Face-on or down-the-line angle</p>
-            <button className="mt-6 px-8 py-3 rounded-full bg-gold text-charcoal font-semibold hover:bg-soft-gold transition">
+            <label
+              htmlFor="swing-video-upload"
+              className="mt-6 inline-block px-8 py-3 rounded-full bg-gold text-charcoal font-semibold hover:bg-soft-gold transition cursor-pointer focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-white"
+            >
               Choose Video
-            </button>
+              <input
+                ref={fileRef}
+                id="swing-video-upload"
+                type="file"
+                accept="video/*"
+                onChange={handleUpload}
+                className="sr-only"
+                aria-label="Upload swing video"
+              />
+            </label>
           </div>
         )}
 
@@ -276,11 +289,11 @@ export default function SwingAnalyzerPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gray-900 rounded-2xl p-8 text-center border border-gray-800">
                 <ScoreRing score={analysis.overallScore} />
-                <h3 className="text-white font-bold mt-4 text-lg">Overall Score</h3>
+                <h2 className="text-white font-bold mt-4 text-lg">Overall Score</h2>
                 <p className="text-gray-500 text-sm mt-1">Est. Handicap: {analysis.handicapEstimate || "N/A"}</p>
               </div>
               <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
-                <h3 className="text-gold font-bold mb-3 flex items-center gap-2">💪 Strengths</h3>
+                <h2 className="text-gold font-bold mb-3 flex items-center gap-2">💪 Strengths</h2>
                 <ul className="space-y-2">
                   {(analysis.strengths || []).map((s, i) => (
                     <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
@@ -290,7 +303,7 @@ export default function SwingAnalyzerPage() {
                 </ul>
               </div>
               <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
-                <h3 className="text-gold font-bold mb-3 flex items-center gap-2">🎯 Improvements</h3>
+                <h2 className="text-gold font-bold mb-3 flex items-center gap-2">🎯 Improvements</h2>
                 <ul className="space-y-2">
                   {(analysis.improvements || []).map((s, i) => (
                     <li key={i} className="text-gray-300 text-sm flex items-start gap-2">
@@ -303,7 +316,7 @@ export default function SwingAnalyzerPage() {
 
             {/* Phase Selector */}
             <div>
-              <h3 className="text-white font-bold text-lg mb-4">Swing Breakdown</h3>
+              <h2 className="text-white font-bold text-lg mb-4">Swing Breakdown</h2>
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {(analysis.phases || []).map((p, i) => (
                   <button key={i} onClick={() => setActivePhase(i)}
@@ -339,9 +352,9 @@ export default function SwingAnalyzerPage() {
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-3xl">{phaseIcons[analysis.phases[activePhase].phase] || "📍"}</span>
                     <div>
-                      <h4 className="text-white font-bold text-xl">
+                      <h3 className="text-white font-bold text-xl">
                         {phaseLabels[analysis.phases[activePhase].phase] || analysis.phases[activePhase].phase}
-                      </h4>
+                      </h3>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="h-2 w-24 bg-gray-800 rounded-full overflow-hidden">
                           <div className="h-full rounded-full transition-all"

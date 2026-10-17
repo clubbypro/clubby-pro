@@ -1,56 +1,107 @@
 import { articles, getArticleBySlug } from "@/data/articles";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 
 export async function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
 }
 
+function formatStrong(text: string) {
+  return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
 function renderMarkdown(content: string) {
   const lines = content.trim().split("\n");
-  const result: React.ReactNode[] = [];
+  const result: ReactNode[] = [];
   let i = 0;
   let tableBuffer: string[] = [];
   let inTable = false;
+  let listKind: "ul" | "ol" | null = null;
+  let listItems: { key: number; html: string }[] = [];
+
+  const flushList = () => {
+    if (!listKind || listItems.length === 0) {
+      listKind = null;
+      listItems = [];
+      return;
+    }
+    const Tag = listKind;
+    const items = listItems;
+    result.push(
+      <Tag key={`list-${items[0].key}`} className={Tag === "ul" ? "list-disc list-inside" : "list-decimal list-inside"}>
+        {items.map((item) => (
+          <li
+            key={item.key}
+            className={`ml-4 text-gray-700 leading-relaxed my-1 ${Tag === "ul" ? "list-disc" : "list-decimal"} list-inside`}
+            dangerouslySetInnerHTML={{ __html: item.html }}
+          />
+        ))}
+      </Tag>
+    );
+    listKind = null;
+    listItems = [];
+  };
+
+  const flushTable = (key: number) => {
+    const rows = tableBuffer.filter(r => !r.match(/^\|[-| ]+\|$/));
+    result.push(
+      <div key={key} className="overflow-x-auto my-6">
+        <table className="w-full text-sm border-collapse">
+          <thead>
+            <tr className="bg-masters-green text-white">
+              {rows[0].split("|").filter(Boolean).map((cell, ci) => (
+                <th key={ci} className="px-4 py-2 text-left font-semibold">{cell.trim()}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.slice(1).map((row, ri) => (
+              <tr key={ri} className={ri % 2 === 0 ? "bg-cream" : "bg-white"}>
+                {row.split("|").filter(Boolean).map((cell, ci) => (
+                  <td key={ci} className="px-4 py-2 text-charcoal border-b border-gray-100">{cell.trim()}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+    tableBuffer = [];
+    inTable = false;
+  };
 
   while (i < lines.length) {
     const line = lines[i];
 
-    // Table handling
     if (line.includes("|") && line.trim().startsWith("|")) {
+      flushList();
       if (!inTable) inTable = true;
       tableBuffer.push(line);
       i++;
       continue;
     } else if (inTable) {
-      // Flush table
-      const rows = tableBuffer.filter(r => !r.match(/^\|[-| ]+\|$/));
-      result.push(
-        <div key={i} className="overflow-x-auto my-6">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="bg-masters-green text-white">
-                {rows[0].split("|").filter(Boolean).map((cell, ci) => (
-                  <th key={ci} className="px-4 py-2 text-left font-semibold">{cell.trim()}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.slice(1).map((row, ri) => (
-                <tr key={ri} className={ri % 2 === 0 ? "bg-cream" : "bg-white"}>
-                  {row.split("|").filter(Boolean).map((cell, ci) => (
-                    <td key={ci} className="px-4 py-2 text-charcoal border-b border-gray-100">{cell.trim()}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-      tableBuffer = [];
-      inTable = false;
+      flushTable(i);
       continue;
     }
+
+    if (line.startsWith("- ")) {
+      if (listKind && listKind !== "ul") flushList();
+      listKind = "ul";
+      listItems.push({ key: i, html: formatStrong(line.slice(2)) });
+      i++;
+      continue;
+    }
+
+    if (/^\d+\. /.test(line)) {
+      if (listKind && listKind !== "ol") flushList();
+      listKind = "ol";
+      listItems.push({ key: i, html: formatStrong(line.replace(/^\d+\. /, "")) });
+      i++;
+      continue;
+    }
+
+    flushList();
 
     if (line.startsWith("## ")) {
       result.push(<h2 key={i} className="font-[var(--font-heading)] text-2xl font-bold text-charcoal mt-10 mb-4">{line.slice(3)}</h2>);
@@ -58,18 +109,6 @@ function renderMarkdown(content: string) {
       result.push(<h3 key={i} className="font-[var(--font-heading)] text-xl font-bold text-charcoal mt-7 mb-3">{line.slice(4)}</h3>);
     } else if (line.startsWith("**") && line.endsWith("**")) {
       result.push(<p key={i} className="font-semibold text-charcoal my-2">{line.slice(2, -2)}</p>);
-    } else if (line.startsWith("- ")) {
-      result.push(
-        <li key={i} className="ml-4 text-gray-700 leading-relaxed my-1 list-disc list-inside"
-          dangerouslySetInnerHTML={{ __html: line.slice(2).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') }}
-        />
-      );
-    } else if (line.match(/^\d+\. /)) {
-      result.push(
-        <li key={i} className="ml-4 text-gray-700 leading-relaxed my-1 list-decimal list-inside"
-          dangerouslySetInnerHTML={{ __html: line.replace(/^\d+\. /, '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') }}
-        />
-      );
     } else if (line === "---") {
       result.push(<hr key={i} className="my-8 border-gray-200" />);
     } else if (line.trim() === "") {
@@ -77,12 +116,15 @@ function renderMarkdown(content: string) {
     } else {
       result.push(
         <p key={i} className="text-gray-700 leading-relaxed my-3"
-          dangerouslySetInnerHTML={{ __html: line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>') }}
+          dangerouslySetInnerHTML={{ __html: formatStrong(line).replace(/\*(.+?)\*/g, "<em>$1</em>") }}
         />
       );
     }
     i++;
   }
+
+  flushList();
+  if (inTable) flushTable(lines.length);
   return result;
 }
 
