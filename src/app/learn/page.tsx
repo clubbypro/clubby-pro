@@ -59,7 +59,7 @@ export default function LearnPage() {
                   </span>
                 </div>
                 <div className="bg-white rounded-b-2xl p-5 shadow-sm group-hover:shadow-md transition-shadow border border-t-0 border-gray-100 h-[calc(100%-11rem)]">
-                  <h3 className="font-[var(--font-heading)] text-lg font-bold text-charcoal group-hover:text-masters-green transition">{a.title}</h3>
+                  <h2 className="font-[var(--font-heading)] text-lg font-bold text-charcoal group-hover:text-masters-green transition">{a.title}</h2>
                   <p className="mt-2 text-sm text-gray-600 line-clamp-2">{a.excerpt}</p>
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-xs text-gray-400">{a.time} read</span>

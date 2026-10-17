@@ -50,7 +50,7 @@ function StepType() {
   const { data, update } = useFit();
   return (
     <div className="space-y-6">
-      <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">What are you looking for?</h2>
+      <h1 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">What are you looking for?</h1>
       <p className="text-gray-600 text-sm">Choose whether you need a complete set or a specific individual club.</p>
       <div className="grid gap-4">
         <button
@@ -109,7 +109,7 @@ function StepBasic() {
   const { data, update } = useFit();
   return (
     <div className="space-y-6">
-      <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Tell us about the golfer</h2>
+      <h1 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Tell us about the golfer</h1>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">Name <span className="text-masters-green">*</span></label>
         <input
@@ -251,7 +251,7 @@ function StepMeasure() {
   const { data, update } = useFit();
   return (
     <div className="space-y-5">
-      <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Key Measurements</h2>
+      <h1 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Key Measurements</h1>
       <p className="text-gray-600 text-sm">These help us recommend the right club length and lie angle. Follow the illustrations for accurate results.</p>
 
       <MeasureCard svg={<HeightSvg />} label="Height" instruction="Stand straight, shoes off, measure from floor to top of head.">
@@ -296,7 +296,7 @@ function StepSkill() {
   const { data, update } = useFit();
   return (
     <div className="space-y-6">
-      <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Skill Level</h2>
+      <h1 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Skill Level</h1>
       <p className="text-gray-600 text-sm">This helps us pick the right club head design and shaft flex.</p>
       <div className="grid gap-4">
         {[
@@ -359,7 +359,7 @@ function StepPrefs() {
   const brands = ["No Preference", "Callaway", "US Kids Golf", "Ping", "TaylorMade", "Cleveland"];
   return (
     <div className="space-y-6">
-      <h2 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Preferences</h2>
+      <h1 className="font-[var(--font-heading)] text-2xl md:text-3xl font-bold text-charcoal">Preferences</h1>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Budget Range</label>
         <div className="grid grid-cols-2 gap-3">

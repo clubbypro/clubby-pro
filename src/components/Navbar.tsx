@@ -94,7 +94,7 @@ export default function Navbar() {
 
   const navBg = scrolled || !isHome
     ? "bg-white shadow-md text-charcoal"
-    : "bg-transparent text-white";
+    : "bg-deep-green text-white";
 
   const links = [
     { href: "/", label: "Home" },
